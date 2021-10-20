@@ -25,3 +25,24 @@ sp_ethnic_data <- SP_municipalities %>%
             c("toupper(name_muni)",
                 "abbrev_state"))
 
+sp_ethnic_data <-
+sp_ethnic_data %>%
+  mutate(origem = case_when(origem == "Ibérico" ~ "Iberian",
+                            origem == "Italiano" ~ "Italian",
+                            origem == "Oriente Médio" ~ "Syrian-Lebanese",
+                            origem == "Oriente médio" ~ "Syrian-Lebanese",
+                            origem == "Germânico" ~ "German",
+                            origem == "Eslavo" ~ "Slav",
+                            origem == "Japonês" ~ "Japanese",
+                            origem == "Francês" ~ "French",
+                            TRUE ~ origem))
+
+sp_ethnic_data %>%
+  filter(origem == "Japanese")
+
+sp_ethnic_data %>%
+  st_as_sf(coords=c("geom")) %>%
+  ggplot() +
+  geom_sf(aes(fill=origem))+
+  ggtitle("Mapa da origem étnica") +
+  theme_minimal()
