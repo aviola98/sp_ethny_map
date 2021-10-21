@@ -50,12 +50,14 @@ sp_ethnic_data %>%
   ggplot() +
   geom_sf(aes(fill=origem),
           color="black")+
+  #removing unnecessary stuff from the background
   theme(
     panel.background = element_blank(),
     panel.grid.major = element_line(color = "transparent"),
     axis.text = element_blank(),
     axis.ticks = element_blank()
   ) +
+  #manually changing colors
   scale_fill_manual(values = c("cyan",
                                 "orange",
                                 "chocolate4",
@@ -67,8 +69,30 @@ sp_ethnic_data %>%
                                 "purple"))+
   ggtitle("Mapa da origem étnica dos prefeitos eleitos no Estado de SP") 
 
-
-View(sp_ethnic_data %>%
-       group_by(origem, NM_CANDIDATO)%>%
-       summarise(origem))
-
+candidates_SP %>%
+  group_by(origem) %>%
+  mutate(origem=case_when(origem=="German"~"Germânico",
+                          origem=="Iberian"~"Ibérico",
+                          origem=="Italian"~"Italiano",
+                          origem=="Oriente médio"~"Sírio-Líbanês",
+                          origem=="Oriente Médio"~"Sírio-Líbanês",
+                          origem=="Syrian-Lebanese"~"Sírio-Líbanês",
+                          origem=="Jewish"~"Judeu",
+                          TRUE~origem)) %>%
+  count(origem) %>%
+  arrange(-n) %>%
+  ggplot() +
+  geom_col(aes(x=origem,
+               y=n,
+               fill = origem))+
+  coord_flip()+
+  scale_fill_manual(values = c("pink",
+                               "cyan",
+                               "orange",
+                               "chocolate4",
+                               "darkolivegreen2",
+                               "blue1",
+                               "yellow",
+                               "brown1",
+                               "purple")) +
+  theme_minimal()
