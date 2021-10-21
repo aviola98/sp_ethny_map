@@ -23,7 +23,7 @@ candidates_SP <- candidates %>%
   filter(UF == "SP") %>%
   rename("toupper(name_muni)" = "CIDADE",
          "abbrev_state" = "UF") %>%
-  mutate(origem = case_when(origem == "Brasileiro" ~"Iberian",
+  mutate(origem = case_when(origem == "Brasileiro" ~"Ibérico",
                             TRUE ~origem))
 #joining databases 
 sp_ethnic_data <- SP_municipalities %>%
@@ -34,14 +34,16 @@ sp_ethnic_data <- SP_municipalities %>%
 #translating from portuguese to english 
 sp_ethnic_data <-
 sp_ethnic_data %>%
-  mutate(origem = case_when(origem == "Ibérico" ~ "Iberian",
-                            origem == "Italiano" ~ "Italian",
-                            origem == "Oriente Médio" ~ "Syrian-Lebanese",
-                            origem == "Oriente médio" ~ "Syrian-Lebanese",
-                            origem == "Germânico" ~ "German",
-                            origem == "Eslavo" ~ "Slav",
-                            origem == "Japonês" ~ "Japanese",
-                            origem == "Francês" ~ "French",
+  mutate(origem = case_when(origem == "Iberian" ~ "Ibérico",
+                            origem == "Italian" ~ "Italiano",
+                            origem == "Oriente Médio" ~ "Sírio-Libanês",
+                            origem == "Oriente médio" ~ "Sírio-Libanês",
+                            origem == "German" ~ "Germânico",
+                            origem == "Slav" ~ "Eslavo",
+                            origem == "Japanese" ~ "Japonês",
+                            origem == "French" ~ "Francês",
+                            origem == "Syrian-Lebanese"~"Sírio-Libanês",
+                            origem == "Jewish"~"Judeu",
                             TRUE ~ origem))
 
 #map
@@ -58,41 +60,14 @@ sp_ethnic_data %>%
     axis.ticks = element_blank()
   ) +
   #manually changing colors
-  scale_fill_manual(values = c("cyan",
+  scale_fill_manual(values =  c("pink",
+                                "cyan",
                                 "orange",
                                 "chocolate4",
                                 "darkolivegreen2",
                                 "blue1",
                                 "yellow",
-                                "pink",
                                 "brown1",
                                 "purple"))+
-  ggtitle("Mapa da origem étnica dos prefeitos eleitos no Estado de SP") 
+  ggtitle("Origem étnica dos primeiros sobrenomes dos prefeitos eleitos no Estado de SP em 2016")
 
-candidates_SP %>%
-  group_by(origem) %>%
-  mutate(origem=case_when(origem=="German"~"Germânico",
-                          origem=="Iberian"~"Ibérico",
-                          origem=="Italian"~"Italiano",
-                          origem=="Oriente médio"~"Sírio-Líbanês",
-                          origem=="Oriente Médio"~"Sírio-Líbanês",
-                          origem=="Syrian-Lebanese"~"Sírio-Líbanês",
-                          origem=="Jewish"~"Judeu",
-                          TRUE~origem)) %>%
-  count(origem) %>%
-  arrange(-n) %>%
-  ggplot() +
-  geom_col(aes(x=origem,
-               y=n,
-               fill = origem))+
-  coord_flip()+
-  scale_fill_manual(values = c("pink",
-                               "cyan",
-                               "orange",
-                               "chocolate4",
-                               "darkolivegreen2",
-                               "blue1",
-                               "yellow",
-                               "brown1",
-                               "purple")) +
-  theme_minimal()
