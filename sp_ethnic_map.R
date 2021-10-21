@@ -22,8 +22,9 @@ candidates <- read_excel("origem.xlsx")
 candidates_SP <- candidates %>%
   filter(UF == "SP") %>%
   rename("toupper(name_muni)" = "CIDADE",
-         "abbrev_state" = "UF") 
- 
+         "abbrev_state" = "UF") %>%
+  mutate(origem = case_when(origem == "Brasileiro" ~"Iberian",
+                            TRUE ~origem))
 #joining databases 
 sp_ethnic_data <- SP_municipalities %>%
   left_join(candidates_SP,
@@ -47,6 +48,27 @@ sp_ethnic_data %>%
 sp_ethnic_data %>%
   st_as_sf(coords=c("geom")) %>%
   ggplot() +
-  geom_sf(aes(fill=origem))+
-  ggtitle("Mapa da origem étnica") +
-  theme_minimal()
+  geom_sf(aes(fill=origem),
+          color="black")+
+  theme(
+    panel.background = element_blank(),
+    panel.grid.major = element_line(color = "transparent"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank()
+  ) +
+  scale_fill_manual(values = c("cyan",
+                                "orange",
+                                "chocolate4",
+                                "darkolivegreen2",
+                                "blue1",
+                                "yellow",
+                                "pink",
+                                "brown1",
+                                "purple"))+
+  ggtitle("Mapa da origem étnica dos prefeitos eleitos no Estado de SP") 
+
+
+View(sp_ethnic_data %>%
+       group_by(origem, NM_CANDIDATO)%>%
+       summarise(origem))
+

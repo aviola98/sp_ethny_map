@@ -5,6 +5,8 @@ library(sf)
 library(purrr)
 library(crul)
 library(readxl)
+library(RColorBrewer)
+
 estados <- c("PR","SC","RS")
 
 #Sul <-  estados %>%
@@ -109,10 +111,23 @@ rs_ethnic_data <-
                             origem == "Francês" ~ "French",
                             TRUE ~ origem))
 
+colors1 <- colorRampPalette(c("red", "green", "orange","blue","black","pink","yellow",
+                                         "beige","grey"))(groups) 
+
 rs_ethnic_data %>%
   st_as_sf(coords=c("geom")) %>%
   ggplot() +
   geom_sf(aes(fill=origem))+
   ggtitle("Mapa da origem étnica") +
-  theme_minimal()
+  theme_minimal() +
+  scale_color_brewer(palette="Dark2")
 
+View(rs_cand %>%
+       group_by(origem,NM_CANDIDATO) %>%
+       summarise(origem))
+
+
+
+View(sc_cand %>%
+  group_by(origem,NM_CANDIDATO) %>%
+  summarise(origem))
